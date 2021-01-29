@@ -3,7 +3,7 @@ package com.hsalf.smileyrating.smileys;
 import android.animation.FloatEvaluator;
 import android.graphics.Color;
 
-import com.hsalf.smilerating.Point;
+import com.hsalf.smileyrating.helper.Point;
 import com.hsalf.smileyrating.smileys.base.Smiley;
 
 public class Bad extends Smiley {

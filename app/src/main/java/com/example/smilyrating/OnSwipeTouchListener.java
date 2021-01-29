@@ -1,18 +1,22 @@
 package com.example.smilyrating;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class OnSwipeTouchListener implements View.OnTouchListener {
 
+    private static final String TAG = "OnSwipeTouchListener";
     private final GestureDetector gestureDetector;
 
     public OnSwipeTouchListener (Context ctx){
         gestureDetector = new GestureDetector(ctx, new GestureListener());
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         return gestureDetector.onTouchEvent(event);
@@ -60,14 +64,18 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     }
 
     public void onSwipeRight() {
+        Log.i(TAG, "onSwipeRight");
     }
 
     public void onSwipeLeft() {
+        Log.i(TAG, "onSwipeLeft");
     }
 
     public void onSwipeTop() {
+        Log.i(TAG, "onSwipeTop");
     }
 
     public void onSwipeBottom() {
+        Log.i(TAG, "onSwipeBottom");
     }
 }

@@ -1,11 +1,12 @@
-package com.hsalf.smilerating;
+package com.hsalf.smileyrating.helper;
+
+import androidx.annotation.NonNull;
 
 public class Point {
     public float x;
     public float y;
 
     public Point() {
-
     }
 
     public Point(Point point) {
@@ -38,8 +39,8 @@ public class Point {
         this.y += y;
     }
 
+    @NonNull
     @Override
-
     public String toString() {
         return "Point{" +
                 "x=" + x +

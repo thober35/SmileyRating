@@ -1,6 +1,5 @@
 package com.example.smilyrating;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,7 @@ public class RecyclerViewExample extends AppCompatActivity {
 
     public static class Adapter extends RecyclerView.Adapter<Holder> {
 
-        private List<Integer> mSelection = new LinkedList<>();
+        private final List<Integer> mSelection = new LinkedList<>();
         private final SmileyActiveIndicator mSmileyActiveIndicator;
 
         public Adapter(List<Integer> data, SmileyActiveIndicator smileyActiveIndicator) {
@@ -61,13 +60,6 @@ public class RecyclerViewExample extends AppCompatActivity {
             SmileyRating rating = ((SmileyRating) holder.itemView);
             rating.setRating(SmileyRating.Type.GREAT);
             rating.setRating(mSelection.get(position));
-            rating.setSmileySelectedListener(new SmileyRating.OnSmileySelectedListener() {
-                @Override
-                public void onSmileySelected(SmileyRating.Type type) {
-                    mSelection.set(position, type.getRating());
-                }
-            });
-            mSmileyActiveIndicator.bind(rating);
         }
 
         @Override

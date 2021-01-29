@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class SmileyActiveIndicator {
 
-    private Set<TouchActiveIndicator> indicators = new HashSet<>();
+    private final Set<TouchActiveIndicator> indicators = new HashSet<>();
 
     public boolean isActive() {
         for (TouchActiveIndicator indicator : indicators) {

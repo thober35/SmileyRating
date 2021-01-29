@@ -4,11 +4,9 @@ import android.animation.FloatEvaluator;
 import android.graphics.Path;
 import android.graphics.RectF;
 
-import com.hsalf.smilerating.Point;
+import com.hsalf.smileyrating.helper.Point;
 
 public abstract class Smiley {
-
-    private static final String TAG = "Smiley";
 
     protected static final float CENTER_X = .5f;
     protected static final float CENTER_Y = .5f;
@@ -16,13 +14,13 @@ public abstract class Smiley {
     protected static final float MOUTH_CENTER_Y = (1 / 2f) + (1 / 5f);
 
     private Point START_POINT;
-    private Point[] TOP_CURVE = new Point[3];
-    private Point[] RIGHT_CURVE = new Point[3];
-    private Point[] BOTTOM_CURVE = new Point[3];
-    private Point[] LEFT_CURVE = new Point[3];
+    private final Point[] TOP_CURVE = new Point[3];
+    private final Point[] RIGHT_CURVE = new Point[3];
+    private final Point[] BOTTOM_CURVE = new Point[3];
+    private final Point[] LEFT_CURVE = new Point[3];
 
-    private Eye mLeftEye;
-    private Eye mRightEye;
+    private final Eye mLeftEye;
+    private final Eye mRightEye;
     private String mName;
     private int mFaceColor;
     private int mDrawingColor;
@@ -319,7 +317,7 @@ public abstract class Smiley {
         Side eyeSide;
         float radius = .08f;
         Point center = new Point();
-        private RectF eyePosition = new RectF();
+        private final RectF eyePosition = new RectF();
 
         RectF calculatePosition() {
             eyePosition.set(center.x - radius, center.y - radius, center.x + radius
@@ -345,11 +343,11 @@ public abstract class Smiley {
         Eye leftEye;
         Eye rightEye;
 
-        private Point START_POINT;
-        private Point[] TOP_CURVE = new Point[3];
-        private Point[] RIGHT_CURVE = new Point[3];
-        private Point[] BOTTOM_CURVE = new Point[3];
-        private Point[] LEFT_CURVE = new Point[3];
+        private final Point START_POINT;
+        private final Point[] TOP_CURVE = new Point[3];
+        private final Point[] RIGHT_CURVE = new Point[3];
+        private final Point[] BOTTOM_CURVE = new Point[3];
+        private final Point[] LEFT_CURVE = new Point[3];
 
         private Points(Smiley smiley) {
             this.START_POINT = new Point(smiley.START_POINT);
@@ -375,7 +373,5 @@ public abstract class Smiley {
             leftEye.scale(smiley.mLeftEye, scale);
             rightEye.scale(smiley.mRightEye, scale);
         }
-
     }
-
 }

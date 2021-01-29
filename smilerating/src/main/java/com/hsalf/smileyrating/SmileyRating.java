@@ -14,18 +14,22 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.Nullable;
 
-import com.hsalf.smilerating.FractionEvaluator;
+import com.hsalf.smileyrating.helper.FractionEvaluator;
 import com.hsalf.smileyrating.helper.TouchActiveIndicator;
 import com.hsalf.smileyrating.smileys.Bad;
+import com.hsalf.smileyrating.smileys.Better;
 import com.hsalf.smileyrating.smileys.Good;
 import com.hsalf.smileyrating.smileys.Great;
 import com.hsalf.smileyrating.smileys.Okay;
+import com.hsalf.smileyrating.smileys.Poor;
 import com.hsalf.smileyrating.smileys.Terrible;
 import com.hsalf.smileyrating.smileys.base.Smiley;
 
@@ -34,9 +38,9 @@ public class SmileyRating extends View implements TouchActiveIndicator {
     private static final String TAG = "SmileyRating";
 
     private static final float DRAWING_PADDING_SCALE = .9f;
-    private static final float PLACEHOLDER_PADDING_SCALE = .6f;
-    private static final float TOTAL_DIVIDER_SPACE_SCALE = .25f;
-    private static final float TEXT_SIZE_SCALE_FROM_SMILEY_SIZE = .2f;
+    private static final float PLACEHOLDER_PADDING_SCALE = .7f;
+    private static final float TOTAL_DIVIDER_SPACE_SCALE = .0f;
+    private static final float TEXT_SIZE_SCALE_FROM_SMILEY_SIZE = .14f;
     private static final float CONNECTOR_LINE_SCALE_FROM_SMILEY_SIZE = .02f;
     private static final int SHADOW_COLOR = Color.argb(60, Color.red(Color.BLACK),
             Color.green(Color.BLACK), Color.blue(Color.BLACK));
@@ -45,20 +49,20 @@ public class SmileyRating extends View implements TouchActiveIndicator {
     private static final FloatEvaluator FLOAT_EVALUATOR = new FloatEvaluator();
     private static final FractionEvaluator FRACTION_EVALUATOR = new FractionEvaluator();
 
-    private Smiley[] mSmileys = new Smiley[]{
-            new Terrible(), new Bad(), new Okay(), new Good(), new Great()
+    private final Smiley[] mSmileys = new Smiley[]{
+            new Terrible(), new Bad(), new Poor(), new Okay(), new Good(), new Better(), new Great()
     };
 
-    private Text[] mTitlePoints = new Text[]{
-            new Text(), new Text(), new Text(), new Text(), new Text()
+    private final Text[] mTitlePoints = new Text[]{
+            new Text(), new Text(), new Text(), new Text(), new Text(), new Text(), new Text()
     };
-    private RectF[] mPlaceHolders = new RectF[mSmileys.length];
-    private Path[] mPlaceHolderPaths = new Path[mSmileys.length];
+    private final RectF[] mPlaceHolders = new RectF[mSmileys.length];
+    private final Path[] mPlaceHolderPaths = new Path[mSmileys.length];
     private OnSmileySelectedListener mOnSmileySelectedListener;
+    private boolean fromUser = false;
 
     public enum Type {
-        TERRIBLE(1), BAD(2), OKAY(3), GOOD(4), GREAT(5), NONE(-1);
-
+        TERRIBLE(1), BAD(2), POOR(3), OKAY(4), GOOD(5), BETTER(6),  GREAT(7), NONE(-1);
 
         int index;
 
@@ -79,25 +83,52 @@ public class SmileyRating extends View implements TouchActiveIndicator {
     private float mHolderScale = 0f;
     private float mSmileyPositionX = 0f;
     private int mCurrentFocusedIndex = 0;
-    private Path mSmileyPath = new Path();
-    private Paint mDrawPaint = new Paint();
-    private Paint mCirclePaint = new Paint();
+    private final Path mSmileyPath = new Path();
+    private final Paint mDrawPaint = new Paint();
+    private final Paint mCirclePaint = new Paint();
     private float mSmileyAppearScale = 0.f;
     private boolean mInflationDone = false;
-    private boolean mDiwallowSelection = false;
-    private TextPaint mTextPaint = new TextPaint();
+    private boolean mDisallowSelection = false;
+    private final TextPaint mTextPaint = new TextPaint();
 
     private int mFaceColor;
     private int mDrawingColor;
     private ClickAnalyser mClickAnalyser;
-    private RectF mFacePosition = new RectF();
+    private final RectF mFacePosition = new RectF();
 
-    private int mTextSelectedColor = Color.BLACK;
-    private int mTextNonSelectedColor = Color.parseColor("#AEB3B5");
-    private int mPlaceholderBackgroundColor = Color.parseColor("#e6e8ed");
+    private final int mTextNonSelectedColor = Color.parseColor("#AEB3B5");
+    private final int mPlaceholderBackgroundColor = Color.parseColor("#e6e8ed");
 
-    private ValueAnimator mSlideAnimator = new ValueAnimator();
-    private ValueAnimator mAppearAnimator = new ValueAnimator();
+    private final ValueAnimator mSlideAnimator = new ValueAnimator();
+    private final ValueAnimator mAppearAnimator = new ValueAnimator();
+
+
+    private final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public void onLongPress(MotionEvent e) {
+            super.onLongPress(e);
+            requestDisallow();
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (Math.abs(distanceX) > 5 && Math.abs(distanceX) > Math.abs(distanceY)) {
+                requestDisallow();
+            }
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+
+        private void requestDisallow() {
+            ViewParent parent = getParent();
+            if (parent != null) {
+                parent.requestDisallowInterceptTouchEvent(true);
+                ViewParent outerParent = parent.getParent();
+                if (outerParent != null) {
+                    outerParent.requestDisallowInterceptTouchEvent(true);
+                }
+            }
+        }
+    });
 
     public SmileyRating(Context context) {
         super(context);
@@ -146,7 +177,7 @@ public class SmileyRating extends View implements TouchActiveIndicator {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 if (mOnSmileySelectedListener != null) {
-                    mOnSmileySelectedListener.onSmileySelected(mSelectedSmiley);
+                    mOnSmileySelectedListener.onSmileySelected(mSelectedSmiley, fromUser);
                 }
             }
         });
@@ -172,7 +203,7 @@ public class SmileyRating extends View implements TouchActiveIndicator {
                     mSelectedSmiley = Type.NONE;
                 }
                 if (mOnSmileySelectedListener != null) {
-                    mOnSmileySelectedListener.onSmileySelected(mSelectedSmiley);
+                    mOnSmileySelectedListener.onSmileySelected(mSelectedSmiley, fromUser);
                 }
             }
 
@@ -200,7 +231,7 @@ public class SmileyRating extends View implements TouchActiveIndicator {
 
     private int calculateHeight(int width) {
         int smileys = mSmileys.length;
-        float estimatedHeight = width / smileys;
+        float estimatedHeight = (float) width / smileys;
         // Reducing 1 divider space from height since divider
         // space will give double space at bottom twice in #createPlaceHolders later
         // estimatedHeight -= estimatedHeight * (TOTAL_DIVIDER_SPACE_SCALE / 3);
@@ -280,7 +311,9 @@ public class SmileyRating extends View implements TouchActiveIndicator {
         // fraction will be between 0 - 1
         float fraction = FRACTION_EVALUATOR.evaluate(pointX, start, end);
 
-        int index = (int) Math.floor(fraction / .202f);
+        float distance = 1f / mSmileys.length;
+
+        int index = (int) Math.floor(fraction / distance);
 
         RectF holder = mPlaceHolders[index];
 
@@ -346,21 +379,21 @@ public class SmileyRating extends View implements TouchActiveIndicator {
         if (mPlaceHolders[0] != null) {
             mDrawPaint.setColor(Color.WHITE);
 
-            drawConnectorLine(canvas, mPlaceHolders);
+//             drawConnectorLine(canvas, mPlaceHolders);
 
             for (int i = 0; i < mPlaceHolderPaths.length; i++) {
                 float scale = PLACEHOLDER_PADDING_SCALE;
-                float textTranslate = 1;
+                // float textTranslate = 1;
                 if (i == mCurrentFocusedIndex && Type.NONE != mSelectedSmiley) {
                     float alteredScale = FLOAT_EVALUATOR.evaluate(mSmileyAppearScale,
                             0, mHolderScale);
                     scale *= alteredScale;
-                    textTranslate = mHolderScale;
+                // textTranslate = mHolderScale;
                 }
                 drawSmileyInRect(canvas, mPlaceHolders[i], mPlaceHolderPaths[i],
                         scale, Color.WHITE, mPlaceholderBackgroundColor, false);
 
-                drawText(canvas, mSmileys[i], mTitlePoints[i], textTranslate);
+                // drawText(canvas, mSmileys[i], mTitlePoints[i], textTranslate);
             }
 
             int drawColor = (int) ARGB_EVALUATOR.evaluate(mSmileyAppearScale,
@@ -375,6 +408,7 @@ public class SmileyRating extends View implements TouchActiveIndicator {
     }
 
     private void drawText(Canvas canvas, Smiley smiley, Text point, float trans) {
+        int mTextSelectedColor = Color.BLACK;
         int color = (Integer) ARGB_EVALUATOR.evaluate(1 - trans,
                 mTextNonSelectedColor, mTextSelectedColor);
         mTextPaint.setColor(color);
@@ -441,7 +475,9 @@ public class SmileyRating extends View implements TouchActiveIndicator {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mDiwallowSelection) {
+        gestureDetector.onTouchEvent(event);
+        fromUser = true;
+        if (mDisallowSelection) {
             return super.onTouchEvent(event);
         }
         int action = event.getAction();
@@ -565,6 +601,7 @@ public class SmileyRating extends View implements TouchActiveIndicator {
     }
 
     public void setRating(int rating, boolean animate) {
+        fromUser = false;
         if (rating < -1 || rating == 0 || rating > mPlaceHolders.length) {
             throw new IllegalArgumentException("You must provide valid rating value " + rating + " is not a valid rating.");
         }
@@ -609,7 +646,7 @@ public class SmileyRating extends View implements TouchActiveIndicator {
     }
 
     public void disallowSelection(boolean disallow) {
-        mDiwallowSelection = disallow;
+        mDisallowSelection = disallow;
     }
 
     private static class Text {
@@ -627,7 +664,7 @@ public class SmileyRating extends View implements TouchActiveIndicator {
 
     private static class ClickAnalyser {
 
-        private static final int MAX_CLICK_DISTANCE = 20;
+        private static final int MAX_CLICK_DISTANCE = 14;
         private static final int MAX_CLICK_DURATION = 200;
 
         private float mPressX;
@@ -635,7 +672,7 @@ public class SmileyRating extends View implements TouchActiveIndicator {
         private final float mDensity;
         private long mPressStartTime;
         private boolean mMoved = false;
-        private boolean mClickEventOccured = true;
+        private boolean mClickEventOccurred = true;
 
         public ClickAnalyser(float density) {
             mDensity = density;
@@ -649,17 +686,10 @@ public class SmileyRating extends View implements TouchActiveIndicator {
             mPressX = x;
             mPressY = y;
             mMoved = false;
-            mClickEventOccured = true;
+            mClickEventOccurred = true;
             mPressStartTime = System.currentTimeMillis();
         }
 
-        /**
-         * returns long press
-         *
-         * @param x
-         * @param y
-         * @return
-         */
         public void move(float x, float y) {
             float dist = distance(mPressX, mPressY, x, y);
             long time = System.currentTimeMillis() - mPressStartTime;
@@ -667,13 +697,13 @@ public class SmileyRating extends View implements TouchActiveIndicator {
                 mMoved = true;
             }
             if ((time) > MAX_CLICK_DURATION || mMoved) {
-                mClickEventOccured = false;
+                mClickEventOccurred = false;
             }
         }
 
         public boolean stop(float x, float y) {
             move(x, y);
-            return mClickEventOccured;
+            return mClickEventOccurred;
         }
 
         private float distance(float x1, float y1, float x2, float y2) {
@@ -706,8 +736,14 @@ public class SmileyRating extends View implements TouchActiveIndicator {
     }
 
     public interface OnSmileySelectedListener {
+        void onSmileySelected(Type type, boolean fromUser);
+    }
+
+    public interface OnSmileySelectedListenerWithoutTouch {
         void onSmileySelected(Type type);
     }
+
+
 
 
 }

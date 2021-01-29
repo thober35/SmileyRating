@@ -1,19 +1,25 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
 
-ext {
-    PUBLISH_GROUP_ID = 'com.github.sujithkanna'
-    PUBLISH_ARTIFACT_ID = 'smileyrating'
-    PUBLISH_VERSION = '2.0.0'
+group = 'com.tbsentertainment'
+version = '3.1.4'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: mavenLocal().getUrl())
+        }
+    }
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 1
-        versionName PUBLISH_VERSION
+        versionName version
     }
     lintOptions {
         abortOnError false
@@ -22,7 +28,5 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
 }
-
-apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'

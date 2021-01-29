@@ -6,15 +6,15 @@ import android.graphics.Color;
 import com.hsalf.smileyrating.helper.Point;
 import com.hsalf.smileyrating.smileys.base.Smiley;
 
-public class Great extends Smiley {
+public class Better extends Smiley {
 
-    public Great() {
-        super(-230, 240);
+    public Better() {
+        super(-135, 360);
 
-        // Create mouth
+        // Create MOUTH
         float div = 0.10f;
         FloatEvaluator f = new FloatEvaluator();
-        createMirrorSmile(new Point(0.5f, 0.5f),
+        createMirrorSmile(new Point(CENTER_SMILE, 0.7f),
                 new Point(f.evaluate(div, CENTER_SMILE * 0.295, CENTER_SMILE), f.evaluate(div, MOUTH_CENTER_Y - (CENTER_SMILE * 0.23), MOUTH_CENTER_Y)),  // Top control
                 new Point(f.evaluate(div, CENTER_SMILE * 0.295, CENTER_SMILE), f.evaluate(div, MOUTH_CENTER_Y - (CENTER_SMILE * 0.088), MOUTH_CENTER_Y)),  // Bottom control
                 new Point(f.evaluate(div, CENTER_SMILE * 0.591, CENTER_SMILE), f.evaluate(div, MOUTH_CENTER_Y - (CENTER_SMILE * 0.23), MOUTH_CENTER_Y)), // Top Point
@@ -22,9 +22,10 @@ public class Great extends Smiley {
         );
         setup(
                 getClass().getSimpleName(),
-                Color.parseColor("#339989"),
+                Color.parseColor("#f2dd68"),
                 Color.parseColor("#353431")
         );
+
     }
 
 

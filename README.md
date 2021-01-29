@@ -1,4 +1,10 @@
 # Smiley Rating
+
+Forked comment:
+this repo has 7 smileys instead of 5.
+removed the middle line (separator).
+removed smiley labels.
+
 SmileyRating is a simple rating bar for android. It displays animated smileys as rating icon.
   - Drawn completely using android canvas
   - Inspired by [Bill Labus](https://dribbble.com/shots/2790473-Feedback)

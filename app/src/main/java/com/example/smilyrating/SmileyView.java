@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -23,28 +24,26 @@ import com.hsalf.smileyrating.smileys.base.Smiley;
 
 public class SmileyView extends View {
 
-    private static final String TAG = "SmileyView";
+    private final ArgbEvaluator mArgbEvaluator = new ArgbEvaluator();
 
-    private ArgbEvaluator mArgbEvaluator = new ArgbEvaluator();
+    private final Path mPath = new Path();
 
-    private Path mPath = new Path();
-
-    private Smiley mBad = new Bad();
-    private Smiley mGood = new Good();
-    private Smiley mOkay = new Okay();
-    private Smiley mGreat = new Great();
-    private Smiley mTerrible = new Terrible();
+    private final Smiley mBad = new Bad();
+    private final Smiley mGood = new Good();
+    private final Smiley mOkay = new Okay();
+    private final Smiley mGreat = new Great();
+    private final Smiley mTerrible = new Terrible();
 
     private int mCurrentSmileyIndex = 0;
 
-    private Smiley[] mSmileys = new Smiley[]{
+    private final Smiley[] mSmileys = new Smiley[]{
             mGreat, mGood, mOkay, mBad, mTerrible
     };
 
-    private Paint mPathPaint = new Paint();
-    private Paint mFacePaint = new Paint();
+    private final Paint mPathPaint = new Paint();
+    private final Paint mFacePaint = new Paint();
 
-    private ValueAnimator mAnimator = new ValueAnimator();
+    private final ValueAnimator mAnimator = new ValueAnimator();
 
     public SmileyView(Context context) {
         super(context);
@@ -89,13 +88,7 @@ public class SmileyView extends View {
         drawSmiley(0, mSmileys[0], mSmileys[1]);
     }
 
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-    }
-
-    OnSwipeTouchListener mSwipeListener = new OnSwipeTouchListener(getContext()) {
+    final OnSwipeTouchListener mSwipeListener = new OnSwipeTouchListener(getContext()) {
         @Override
         public void onSwipeLeft() {
             super.onSwipeLeft();
@@ -109,6 +102,7 @@ public class SmileyView extends View {
         }
     };
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return mSwipeListener.onTouch(this, event);
@@ -120,17 +114,15 @@ public class SmileyView extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (widthMeasureSpec < heightMeasureSpec) {
             setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth());
-            drawSmiley(0, mSmileys[0], mSmileys[1]);
         } else {
             setMeasuredDimension(getMeasuredHeight(), getMeasuredHeight());
-            drawSmiley(0, mSmileys[0], mSmileys[1]);
         }
+        drawSmiley(0, mSmileys[0], mSmileys[1]);
         setScaleForSmiley();
     }
 
     private void setScaleForSmiley() {
-        for (int i = 0; i < mSmileys.length; i++) {
-            Smiley smiley = mSmileys[i];
+        for (Smiley smiley : mSmileys) {
             smiley.scale(getMeasuredWidth());
         }
     }
@@ -170,8 +162,8 @@ public class SmileyView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2,
-                canvas.getWidth() / 2, mFacePaint);
+        canvas.drawCircle(getWidth() / 2f, getHeight() / 2f,
+                getWidth() / 2f, mFacePaint);
         canvas.drawPath(mPath, mPathPaint);
     }
 }

@@ -28,12 +28,6 @@ public class SmileyActivity2 extends AppCompatActivity {
         final TextView status = (TextView) findViewById(R.id.status);
 
         mSmileyRating = (SmileyRating) findViewById(R.id.smiley);
-        mSmileyRating.setSmileySelectedListener(new SmileyRating.OnSmileySelectedListener() {
-            @Override
-            public void onSmileySelected(SmileyRating.Type type) {
-                status.setText(type.toString());
-            }
-        });
 
         mSmileyRating.setTitle(SmileyRating.Type.GREAT, "Awesome");
         mSmileyRating.setFaceColor(SmileyRating.Type.GREAT, Color.BLUE);

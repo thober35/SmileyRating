@@ -1,8 +1,6 @@
-package com.hsalf.smilerating;
+package com.hsalf.smileyrating.helper;
 
 public class FractionEvaluator {
-
-    private static final String TAG = "FractionEvaluator";
 
     public float evaluate(float x, float start, float end) {
         if (start == end) {
