@@ -22,7 +22,7 @@ public class Great extends Smiley {
         );
         setup(
                 getClass().getSimpleName(),
-                Color.parseColor("#339989"),
+                Color.parseColor("#26DADA"),
                 Color.parseColor("#353431")
         );
     }

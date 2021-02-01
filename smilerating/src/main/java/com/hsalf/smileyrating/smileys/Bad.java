@@ -21,7 +21,7 @@ public class Bad extends Smiley {
         );
         setup(
                 getClass().getSimpleName(),
-                Color.parseColor("#f2dd68"),
+                Color.parseColor("#FFB703"),
                 Color.parseColor("#353431")
         );
     }

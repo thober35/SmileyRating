@@ -12,7 +12,7 @@ public class Okay extends Smiley {
         createStraightSmile(new Point(CENTER_SMILE, MOUTH_CENTER_Y), (CENTER_SMILE * 0.1f), 360f, (CENTER_SMILE * 0.9f));
         setup(
                 getClass().getSimpleName(),
-                Color.parseColor("#f2dd68"),
+                Color.parseColor("#FFFF3F"),
                 Color.parseColor("#353431")
         );
     }

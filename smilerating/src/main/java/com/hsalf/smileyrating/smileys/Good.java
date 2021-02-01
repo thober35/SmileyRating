@@ -21,7 +21,7 @@ public class Good extends Smiley {
         );
         setup(
                 getClass().getSimpleName(),
-                Color.parseColor("#f2dd68"),
+                Color.parseColor("#D9FF40"),
                 Color.parseColor("#353431")
         );
     }

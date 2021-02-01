@@ -22,7 +22,7 @@ public class Better extends Smiley {
         );
         setup(
                 getClass().getSimpleName(),
-                Color.parseColor("#f2dd68"),
+                Color.parseColor("#15DA5A"),
                 Color.parseColor("#353431")
         );
 
